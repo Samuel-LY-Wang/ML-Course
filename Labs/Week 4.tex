@@ -1,0 +1,30 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{listings} % useful for putting code in
+
+\title{ML Course Chapter 4}
+\author{Samuel Wang}
+\date{August 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Lab}
+
+\subsection{Question 1}
+
+\paragraph{C: } Using a step size of 0.01, we do converge very close to x=-1.5, but this happens very slowly. \newline
+Using a step size of 0.1, we converge more quickly without too much oscillation. \newline
+With a step size of 0.2, we oscillate back and forth over the optimal valley. \newline
+With a step size of 0.3, we diverge.
+
+\paragraph{D: } Defining $z=x+1.5$, we get $f(z)=4z^2$ and $z^{(k)}=x^{(k)}+1.5$. Thus, doing gradient descent on $f(z)$, we now get $z^{(k+1)}=z^{(k)}-\eta \cdot 8z^{(k)}$, or $z^{(k+1)}=(1-8\eta)\cdot z^{(k)}$. Thus, we get $\alpha = 1-8\eta$ for all $\eta$.
+
+\subsection{Question 2}
+
+\paragraph{A: } Here, we would want to minimize $\sum_{i=1}^n (p-l_i)^2$
+
+\paragraph{B: } Here, the gradient would just be the derivative with respect to $p$, which for each $(p-l_i)^2$ would be $2p-2l_i$. Adding it up, we get the gradient as $[2np-2\sum_{i=1}^n l_i]$. From this, we can easily get that the gradient is linear in $p$, and equals $0$ when $p$ is equal to the mean of all $l_i$.
+
+\end{document}

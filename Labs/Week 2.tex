@@ -1,0 +1,68 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{listings} % useful for putting code in
+
+\title{ML Course Chapter 2}
+\author{Samuel Wang}
+\date{July 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Lab}
+
+\subsection{Question 1}
+
+\paragraph{A: } I would not recommend reusing the training data for evaluation, as this means you are unable to test whether a model is truly accurate or if it is overfitting to the training data. It is similar to how in any course, the practice problems and exercises are different from the problems on the exam.
+
+\paragraph{B: } I suggest testing the model on a specific subset of points not part of the training set. In this case, we could simply take the output as a different generated set of points. The syntax would look somewhat like the following:
+\begin{lstlisting}[language=Python]
+D_test=G(n)
+score=eval_classifier(h,D_test)
+\end{lstlisting}
+
+\paragraph{C: } This approach would allow you to detect if the model is overfitting, an issue that was present in the original classifier.
+
+\paragraph{D: } If $D_{test}$ came from a different distribution, then the evaluator would evaluate the model as being worse than it truly is, since the model was trained on data generated with $G$, not data generated from this new distribution.
+
+\subsection{Question 2}
+
+\paragraph{A: } Absolutely not. If the training sets are unrelated, there is no reason for the final model produced after training on each of these training sets to be similar in any way. \newline
+However, if the training sets came from the same distribution, then the classifiers could end up being very similar, but likely not identical.
+
+\paragraph{B: } The issue here is that the distribution is probabilistic, meaning that the evaluation of a particular model can swing heavily depending on the exact data points pulled from the distribution. Another major issue would be that there is no guarantee that training data is not reused for testing. Additionally, since this model only returns the testing accuracy, there is no way to tell between an overfitted model and an underfitted model, as both would show as low accuracy.
+
+\paragraph{C: } This is certainly an improvement, by testing on 10 independent sets of data and combining the scores to reduce the impact of luck. However, this still does not fix the issue of train and test having some potential overlap, and the large amount of testing may cause performance issues. The issue of the algorithm only returning one number (and thus being unable to detect overfitting) also has not been fixed. I would call this an improvement, but still not good.
+
+\paragraph{D: } My pseudocode would work something like this: \newline
+\begin{lstlisting}[language=Python]
+def eval_learning(L, G, n, train_ratio=0.8):
+    # generate samples
+    all_x, all_y=G(n)
+    
+    # split into n*train_ratio training and n*(1-test_ratio) test samples
+    (train_x, train_y)=(all_x[:n*train_ratio], all_y[:n*train_ratio])
+    (test_x, test_y)=(all_x[n*train_ratio:], all_y[n*train_ratio:])
+
+    #train the model
+    h=L(train_x, train_y)
+
+    #evaluate its accuracy on both the train and test sets
+    train_score=eval_classifier(h, [train_x,train_y])
+    test_score=eval_classifier(h, [test_x,test_y])
+    
+    return {
+        "training accuracy": train_score/(len(train_x)),
+        "test accuracy": test_score/(len(test_x))
+    }
+    # returns a measure of the model's average score
+\end{lstlisting}
+
+\paragraph{E: } One benefit of this is that it guarantees that the training and test data are separate. Additionally, one benefit over Linnea's improved strategy is that this model allows for greater flexibility by not hard-coding the test ratio. Additionally, this is capable of detecting overfitting or underfitting, as it returns both the training and testing accuracy, an improvement over only returning the testing accuracy.
+
+\subsection{Question 3}
+
+\paragraph{A: } If I had to implement the approach from 2C, I would rework G to instead sample random points among the 100 present. The problem is that 2C does not work with little data, as machine learning algorithms require much more data for training than testing. It is thus advisable to not take this approach, but instead to allocate more data to training (say 80 data points), and the rest to testing. Training on only 10 data points is likely to lead to either overfitted or underfitted algorithms.
+
+\end{document}

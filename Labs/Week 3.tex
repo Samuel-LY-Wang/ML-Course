@@ -1,0 +1,74 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{listings} % useful for putting code in
+
+\title{ML Course Chapter 3}
+\author{Samuel Wang}
+\date{August 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Lab}
+
+\subsection{Question 1}
+
+\paragraph{A: } The origin of a car should not be coded numerically, but rather in a one-hot fashion. Additionally, since the weight is likely to be in the thousands while cylinders is likely around 5, this perceptron will take a very long time to train. Another major issue with the dataset is that the data mainly comes from the 1970s, and thus the prediction is likely no longer accurate in 2025. This however is an issue of the dataset, not of the algorithm. There are also too many features, meaning underfitting is likely
+
+\paragraph{B: }
+\begin{itemize}
+    \item cylinders: I would keep this raw, since the number of cylinders a car has is a fairly small, discrete number. Standardizing is an option, but I would not recommend it, since it is not necessary in this case.
+    \item displacement: I would standardize this, since it is very possible, depending on how displacement is measured, to become either unwieldy or too small to train the perceptron on without many trials.
+    \item horsepower: I would standardize this, since the horsepower of a car is typically in the hundreds, thus a perceptron trained on non-normalized data would take a while
+    \item weight: I would standardize this, since the horsepower of a car is typically in the hundreds, thus a perceptron trained on non-normalized data would take a while
+    \item acceleration: I would drop this, since acceleration can be determined in large part by a car's horsepower (engine power) and weight. If other factors play a large part, I would keep and normalize acceleration for the same reason as horsepower and weight.
+    \item model year: I would normalize this as well, since the years can be ordered sequentially, but the number is quite large.
+    \item origin: I would use one-hot encoding for this, as the different origins do not have an obvious numerical order, and the data is discrete.
+\end{itemize}
+If preliminary results show that some factors are largely irrelevant to a car's performance, those factors can be dropped to speed up further training. Additionally, perceptrons do best when training on independent metrics, so I would also cut the number of cylinders from consideration.
+
+\paragraph{C: } There are a couple of solutions here. One is to use a transformer to vectorize the car's name by encoding meaning. Another approach that is extremely inefficient would be to use one-hot encoding across all car names in the dataset.
+
+\paragraph{D: } Assuming the perceptron training algorithm is rather fast (and therefore performance is not a factor), the best solution is to use cross-validation. This way, each method of feature mapping is tested on all data, while avoiding overfitting. The first 2 approaches run into a severe overfitting issue, as the training and test data overlap significantly. The third approach is decent, but can be very dependent on which 10\% of the data is chosen as test data. So, the fourth approach, cross-validation, is best.
+
+\subsection{Question 2}
+
+\paragraph{A: } Each word only occurs once in the dictionary, so we can ignore the repetition of "is" and "apples", leaving us with only "Mary", "is", "selling", "apples", "Tom", "buying", "to", "eat"
+
+\paragraph{B: } The sentence "Tom is buying apples to eat" contains the words "Tom", "is", "buying", "apples", "to", and "eat"
+
+\paragraph{C: } The major issue with this approach is that order is not preserved. In the given example, it is known that the sentence contains exactly one of each of the following: "Mary", "is", "selling", "apples", "to", and "Tom". This doesn't tell us whether Mary is selling to Tom, or if Tom is selling to Mary. In more fantastical scenarios, we may even imagine one of Tom or Mary being sold to apples.
+
+\paragraph{D: } Common words do not help in detecting a review's sentiment, as they commonly occur both in positive and negative reviews. Both positive and negative reviews are likely to contain words such as "I", "an", or "it". Review sentiment detection works best when looking at words with stronger sentiments that occur more frequently in one form of review than the other. For example, "disgusting" is far more likely to occur in a negative review than a positive review, so it is more helpful to focus on for review sentiment detection.
+
+\subsection{Question 3}
+
+\paragraph{A: } This would look like the following: \newline
+\begin{tabular}{|c|c|c|c|c|}
+    \hline
+    1&1&0&1&1 \\
+    \hline
+    1&0&0&1&1 \\
+    \hline
+    1&1&0&1&1 \\
+    \hline
+    1&1&0&1&1 \\
+    \hline
+    1&0&0&0&1 \\
+    \hline
+\end{tabular}
+
+\paragraph{B: } This question only asked for the last 3 elements of the flattened version of the matrix in A, which is [0,0,1]
+
+\paragraph{C: } A perceptron would do decent on this dataset, but representing an image as a vector loses the spatial information in an image. For example, the perceptron is forced to independently evaluate the state of each pixel, whereas a smarter algorithm would maintain such spatial information, knowing that the state of adjacent pixels are not entirely independent.
+
+\paragraph{D: } Here, I'd suggest adding feature extraction, such as detecting how many long vertical "bars" the number has. This transforms the data, allowing the perceptron to focus on classifying given a few independent metrics.
+
+\subsection{Question 4}
+
+\paragraph{A: } I don't expect the perceptron to do too well. Perceptrons treat all data points as distinct and independent, which is absolutely not the case with sound. The amplitude at one point in time is likely to be similar to the amplitude at the next point. So, a training method that takes this into account is better. For example, perhaps a Fourier-based training algorithm that takes the few most relevant frequencies and uses them to train a perceptron would be better.
+
+\paragraph{B: } The main difference is that the cat's meow is higher-pitched than the dog's bark, and the meow lasts longer. There are also more subtle differences, but these are the main ones. Given said black box (which likely involves Fourier transforms), I'd extract features from the sound clips based off both the 5 most dominant frequencies and their amplitudes. I would represent this as a perceptron training on 5 sources of input: the frequency and amplitude of the 5 most dominant frequencies.
+
+\end{document}

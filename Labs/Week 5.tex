@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{listings} % useful for putting code in
+
+\title{ML Course Chapter 5}
+\author{Samuel Wang}
+\date{August 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Lab}
+
+\subsection{Question 1}
+
+\paragraph{A: } The 0th-order would simply be a horizontal line at whatever the average of the data is. This is exactly what I expect.
+
+\paragraph{B: } Since there are 10 data points, a degree 9 polynomial allows us to exactly match to every data point, although this results in rather severe overfitting. Running, this is the case. The data points are fine, but on all other values, the error would likely be rather large.
+
+\paragraph{C: } With too large a polynomial order, the model overfits, making it less accurate on any test data.
+
+\paragraph{D: } It also seems as if when the polynomial order increases, so does the magnitude of all the coefficients in the resulting polynomial. For example, with order=9, the largest coefficients are in the 500,000 range, but with order=3 (a reasonable assumption for this set of data), the largest coefficient is about 25.
+
+\paragraph{E: } Subjectively, after running order=3, I feel as if it fits the data fairly well without overfitting, since it produces reasonable outputs within the range of inputs provided.
+
+\paragraph{F: } Seems I was correct in stating that order=3 was optimal, since it produced the smallest total error.
+
+\paragraph{G: } Abstractly, there is no issue with a higher-degree polynomial, since we can simply set the coefficient of all terms higher than $x^9$ to $0$.
+
+\paragraph{H: } Analytically, it somehow does even worse than order=9, as it not only produces absurd outputs, it also doesn't even fit the test points fully accurately.
+
+\subsection{Question 2}
+
+\paragraph{A: } When using $\lambda=0$, we get the same overfitted answer as without regularization. On the other hand, when using a very large value of $\lambda$ (I used $10000000$), the code over-regularizes, and we end up essentially with a straight line, also useless for classification.
+
+\paragraph{B: } If our goal is solely to reduce the training error, it's optimal to simply set $\lambda=0$, as that will allow the algorithm to optimize only on the training set, without worrying about regularization. In reality, this would never happen, as it leads to an absurd amount of overfitting, as we clearly see in this example.
+
+\paragraph{C: } From my testing, I see that $\lambda=0.1$ performs pretty well, both avoiding overfitting and over-regularizing.
+
+\paragraph{D: } It seems both $\lambda=0.1$ and $\lambda=0.11$ are approximately equally good for avoiding overfitting. It's pretty close to my previous answer, actually. For best performance only on the training set (with no regard to overfitting or test sets), just ignore $\lambda$ entirely by setting it to be $0$.
+
+\subsection{Question 3}
+
+\paragraph{A: } For order 1, even a tiny step size of 0.03 caused the end curve to be essentially equivalent to the analytic solution. For order 2, it's not until step size 0.5 that the end curve is essentially identical to the analytically derived curve.
+
+\paragraph{B: } For order 3, a similar curve could be obtained with a step size of between 0.2 and 0.25, but it was almost impossible to find anything that got to almost exactly the perfect curve.
+
+\paragraph{C: } For order 9, it's actually difficult to get the exact analytical solution, but the gradient descent with a step size of 0.2 to 0.3 reaches a non-overfitted curve that also matches the data very well.
+
+\end{document}

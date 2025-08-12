@@ -205,3 +205,8 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Just chapter notes I've downloaded, which I will not commit
+Chapter notes
+# Why is this not in the default gitignore? It's literally just MacOS Metadata
+**/.DS_Store
