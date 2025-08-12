@@ -210,3 +210,5 @@ __marimo__/
 Chapter notes
 # Why is this not in the default gitignore? It's literally just MacOS Metadata
 **/.DS_Store
+# testing file, so ignored
+test.py
