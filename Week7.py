@@ -30,7 +30,7 @@ class Tanh(Module):            # Layer activation
         return self.A
 
     def backward(self, dLdA):    # Uses stored self.A
-        return dLdA*0 # multiply by dA/dZ              # Your code: return dLdZ
+        return dLdA*(np.ones(self.A.shape)-np.power(self.A,2)) # Your code: return dLdZ
 
 
 class ReLU(Module):              # Layer activation
@@ -39,18 +39,20 @@ class ReLU(Module):              # Layer activation
         return self.A
 
     def backward(self, dLdA):    # uses stored self.A
-        return None              # Your code: return dLdZ
+        ReLU_grad = (self.A > 0).astype(float)  # Your code
+        return dLdA * ReLU_grad                 #returns dL/dZ
 
 
 class SoftMax(Module):           # Output activation
     def forward(self, Z):
-        return None              # Your code
+        ez = np.exp(Z - np.max(Z, axis=0, keepdims=True)) # subtracts out the max for stability
+        return ez / np.sum(ez, axis=0, keepdims=True) # outputs softmax probabilities
 
     def backward(self, dLdZ):    # Assume that dLdZ is passed in
         return dLdZ
 
     def class_fun(self, Ypred):  # Return class indices
-        return None              # Your code
+        return np.argmax(Ypred, axis=0)
 
 
 class NLL(Module):       # Loss
