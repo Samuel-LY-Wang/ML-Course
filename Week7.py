@@ -15,8 +15,8 @@ class Linear(Module):
         return np.dot(self.W.T, A)+self.W0  # Your code (n x b)
 
     def backward(self, dLdZ):  # dLdZ is (n x b), uses stored self.A
-        self.dLdW = np.dot(self.A, dLdZ)       # Your code
-        self.dLdW0 = dLdZ      # Your code
+        self.dLdW = np.dot(self.A, dLdZ.T)       # Your code
+        self.dLdW0 = np.sum(dLdZ, axis=1, keepdims=True)     # Your code
         return np.dot(self.W, dLdZ)            # Your code: return dLdA (m x b)
 
     def sgd_step(self, lrate):  # Gradient descent step
@@ -59,10 +59,32 @@ class NLL(Module):       # Loss
     def forward(self, Ypred, Y):
         self.Ypred = Ypred
         self.Y = Y
-        return None      # Your code
+        # If Y is one-hot: get indices
+        if Y.ndim > 1 and Y.shape[0] > 1:
+            Y_idx = np.argmax(Y, axis=0)
+        else:
+            Y_idx = Y.flatten()
+        # Gather predicted probabilities for correct classes
+        probs = Ypred[Y_idx, np.arange(Ypred.shape[1])]
+        # Compute NLL loss
+        return -np.sum(np.log(probs + 1e-9))
 
-    def backward(self):  # Use stored self.Ypred, self.Y
-        return None      # Your code
+    def backward(self):
+        # Ypred must be softmax probabilities of shape (C, B)
+        Ypred = self.Ypred
+        Y = self.Y
+        B = Ypred.shape[1]
+
+        if Y.ndim == 2 and Y.shape[0] > 1:
+            # one-hot targets shaped (C, B)
+            grad = Ypred - Y                    # dL/dz = p - y
+        else:
+            # class indices shaped (B,) or (1, B)
+            idx = Y.flatten().astype(int)
+            grad = Ypred.copy()
+            grad[idx, np.arange(B)] -= 1        # subtract 1 at the true class
+
+        return grad                          # average over batch
 
 
 class Sequential:
@@ -73,7 +95,20 @@ class Sequential:
     def sgd(self, X, Y, iters=100, lrate=0.005):  # Train
         D, N = X.shape
         for it in range(iters):
-            pass                                  # Your code
+            # Randomly select a data point
+            idx = np.random.randint(N)
+            x_i = X[:, idx:idx+1]  # shape (D, 1)
+            y_i = Y[:, idx:idx+1]  # shape (C, 1) or (1, 1)
+            # Forward pass
+            y_pred = self.forward(x_i)
+            # Compute loss
+            cur_loss = self.loss.forward(y_pred, y_i)
+            # Backward pass
+            delta = self.loss.backward()
+            self.backward(delta)
+            # SGD step
+            self.sgd_step(lrate)
+            self.print_accuracy(it, X, Y, cur_loss)
 
     def forward(self, Xt):                        # Compute Ypred
         for m in self.modules: Xt = m.forward(Xt)
