@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{listings} % useful for putting code in
+
+\title{ML Course Chapter 6}
+\author{Samuel Wang}
+\date{August 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Lab}
+
+\subsection{Question 1}
+
+\paragraph{A: } This task is impossible, as we are being asked to detect whether $x_3-x_1$ is either greater than $1$ or less than $-1$. With only 1 layer, this is impossible, as activation is linear.
+
+\paragraph{B: } This is very possible. With the 2 units in the first layer, we can detect $x_3-x_1>1$ with one unit and $x_3-x_1<-1$ with the other. Then, to detect an edge, we simply detect whether either one of the activations in the first layer is positive. If it is, then an edge was detected. If not, no edge exists.
+
+\subsection{Question 2}
+
+\paragraph{A: } \includegraphics[width=5cm, height=4cm]{Week 8 2A.png}
+
+\paragraph{B: } This would simply find all $i$ such that $x_{i+1}-x_{i-1}>1$, which is $i=3, 4, 6, 7$
+
+\paragraph{C: } This would simply find all $i$ such that $x_{i-1}-x_{i+1}>1$, which is $i=9, 10, 12, 13$
+
+\subsection{Question 3}
+
+\paragraph{A: } It seems as if f1 looks for horizontal edges, and a bias of about $-4$ or $-5$ was best at filtering out noise while avoiding filtering out real edges too much. \newline
+It seems like f2 looks for vertical edges, and a bias of about $-3$ to $-4$ was best. \newline
+It seems as if f3 looks for points brighter than their neighbors. Similarly to the previous filters, $-3$ to $-4$ was best.
+
+\paragraph{C: } If the bias is increased (becoming more positive), then the output appears to filter out less data, but become noisier. If the bias is decreased (becoming more negative), the output becomes less noisy, but can filter out true data as well.
+
+\paragraph{D: } If the bias is $0$, multiplying all the weights by a specific positive value does nothing, and multiplying by a negative value simply swaps white and black. However, if the bias is nonzero, multiplying the weights by a specific value effectively multiplies the bias by the inverse of the weight multiplier. If the coefficients are changed in a nonlinear way, it's very difficult to determine.
+
+\paragraph{E: } This would only require 3 layers. The first layer would have 3 units with ReLU activation, with the first unit finding instances of $01$ (which we can do with weights $[-1,0]$ and bias $1$), the second unit finding instances of $10$, and the third unit finding instances of $0$ (this is to detect whether the first or last pixel is a $0$, and can be done with $w=[-1]$, $b=1$). The second layer would concatenate the outputs of the first layer into one vector. The third layer would be a single perceptron layer, and first add up all elements from the first 2 units of the first layer, then add in the first and last element of the third unit. Then, take all the weights, and divide by $2$. For an input of length $10$, for example, the network looks like this: \newline
+Layer 1:
+\begin{enumerate}
+    \item Convolution w/ weights $[-1,0]$ and bias $+1$, ReLU activation
+    \item Convolution w/ weights $[0,-1]$ and bias $+1$, ReLU activation
+    \item Convolution w/ weights $[-1]$ and bias $+1$, ReLU activation
+\end{enumerate}
+Layer 2:
+\begin{enumerate}
+    \item Concatenate into vector of length $28$ (no weights)
+\end{enumerate}
+Layer 3:
+\begin{enumerate}
+    \item Single perceptron with weights:\newline $[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,\newline 0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5\newline 0.5,0,0,0,0,0,0,0,0,0.5]$\newline and bias $0$
+\end{enumerate}
+
+\subsection{Question 4}
+
+\paragraph{A: } Given $x=[a_1, a_2, a_3, a_4]$, we can compute $\phi(x)=[6a_1+7a_2, 5a_1+6a_2+7a_3, 5a_2+6a_3+7a_4, 5a_3+6a_4]$. From here, the transformation to matrix is trivial.
+
+\paragraph{B: } First, we assume $s=1$. With padding of $p$ on both sides, the effective length of the input is $d+2p$. Since we disallow any part of the filter to exit the padding, we must subtract $k-1$ to get the length of all possible "centers" of the filter. Thus, with a stride of $1$, the length of the output vector is $d+2p-k+1$. The reason we left stride till the end is because with a longer stride, we can simply divide the length by $s$ and take the floor, for a final length of: \newline
+$$\left\lfloor \frac{d+2p-k+1}{s}\right\rfloor$$
+
+\end{document}
