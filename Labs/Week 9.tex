@@ -1,0 +1,109 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{listings} % useful for putting code in
+
+\title{ML Course Chapter 9}
+\author{Samuel Wang}
+\date{August 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Lab}
+
+\subsection{Question 1}
+
+\paragraph{A: } The states of the plate are: ["dirty", "clean", "painted", "ejected"]. The actions are ["wash", "paint", "eject"]. \newline
+The transition model is as follows:\newline
+"wash" action:
+$\begin{pmatrix}
+    0.1 & 0.9 & 0 & 0 \\
+    0.1 & 0.9 & 0 & 0 \\
+    0.1 & 0.9 & 0 & 0 \\
+    0 & 0 & 0 & 1
+\end{pmatrix}$ \newline
+"paint" action:
+$\begin{pmatrix}
+    1 & 0 & 0 & 0 \\
+    0.1 & 0.1 & 0.8 & 0 \\
+    0 & 0 & 1 & 0 \\
+    0 & 0 & 0 & 1
+\end{pmatrix}$ \newline
+"eject" action:
+$\begin{pmatrix}
+    0 & 0 & 0 & 1 \\
+    0 & 0 & 0 & 1 \\
+    0 & 0 & 0 & 1 \\
+    0 & 0 & 0 & 1
+\end{pmatrix}$ \newline
+The reward function can be defined as follows: \newline
+If state="painted" and action="eject": reward += 10 \newline
+Else if action="eject": reward += 0 \newline
+Else: reward += -3
+
+\paragraph{B: } Intuitively, the policy does as follows: \newline
+If current state is "dirty", perform action "wash" \newline
+If current state is "clean", perform action "paint" \newline
+If current state is "painted", perform action "eject" \newline
+If current state is "ejected", perform action "eject" \newline
+We can mathematically compute the expected reward from this policy as $+2.5$, which is indeed positive.
+
+\paragraph{C: } If the discount is as small as 0.1, then the effective maximum reward we can get from ejecting a painted plate is +0.01. However, this requires 3 non-eject actions, for a reward of at most -3. Thus, the optimal policy is to always eject the plate, guaranteeing a reward of 0.
+
+\paragraph{D: } If the horizon is 2, it is impossible to eject a painted plate, as that requires at least 3 actions performed. Thus, it is optimal to always eject the plate.
+
+\subsection{Question 2}
+
+\paragraph{A: } After the first iteration, no actions may be taken. The non-zero states correspond to the 2 special cells, the terminating cell of reward 100 and the non-terminating cell of reward 50.
+
+\paragraph{B: } In iterations 2 to 7, with an expanding horizon, the cells an increasing distance away from the special cells begin to have optimal moves towards the reward cells. By iteration 7, cells $6$ away from the cells with rewards will optimally move towards those rewarded cells.
+
+\paragraph{C: } In iteration 11, the upper-right reward cell is brighter than the lower-left one because it is non-terminating, thus the +50 reward can be applied as many times as desired. The lower-left reward cell is terminating, thus it is permanently stuck at +100 reward.
+
+\paragraph{D: } Around iteration 16, we can see that for cells equidistant from both reward cells, both provide very similar expected reward.
+
+\paragraph{E: } Around iteration 20, we can see that for more cells, it is optimal to walk towards the repeating reward, rather than the static one.
+
+\paragraph{F: } If we run this algorithm for more iterations, we can expect that every cell except for the terminal cell will optimally walk towards the repeatable reward cell. It is not expected that the robot will terminate.
+
+\subsection{Question 3}
+
+\paragraph{A: } Trivial paper and pencil computation, $[y_1, y_2, y_3]=[5, -5, 0]$
+
+\paragraph{B: } We can simply define $s=[y_{t-1}, y_{t-2}, y_{t-3}]$. Since $y$ is unbounded in both directions, only linear activation works.
+
+\paragraph{C: } Since $y$ is unbounded in both directions, only linear activation works.
+
+\paragraph{D: } Since $y_t$ depends only on the previous $3$ numbers, we can get away with $s$ being a $3\times 1$ matrix, as that is all the data needed.
+
+\paragraph{E: } Given $y_0=0$, we have: \newline
+$s_0=\begin{pmatrix}
+    5 \\
+    0 \\
+    0 \\
+\end{pmatrix}$ \newline
+$W^{ss}=\begin{pmatrix}
+    1&-2&3 \\
+    1&0&0 \\
+    0&1&0 \\
+\end{pmatrix}$ \newline
+$W^{sx}=\begin{pmatrix}
+    0\\
+    0\\
+    0
+\end{pmatrix}$ \newline
+$W_0^{ss}=\begin{pmatrix}
+    0\\
+    0\\
+    0
+\end{pmatrix}$ \newline
+$W^0=\begin{pmatrix}
+    1&-2&3
+\end{pmatrix}$ \newline
+$W_0^0=0$
+
+
+\end{document}
