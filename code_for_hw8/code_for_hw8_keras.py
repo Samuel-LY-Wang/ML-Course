@@ -2,16 +2,16 @@
 # Here, we use out-of-the-box neural network frameworks Keras and Tensorflow 
 # to build and train our models
 
+
 import pdb
 import numpy as np
+np.random.seed(0) # for reproducibility
 import itertools
-
-import math as m 
-
+import math as m
 from keras.models import Sequential
 from keras.optimizers import SGD, Adam
 from keras.layers import Conv1D, Conv2D, Dense, Dropout, Flatten, MaxPooling2D
-from keras.utils import np_utils
+from keras.utils import to_categorical
 from keras.callbacks import Callback
 from keras.datasets import mnist
 from keras import backend as K
@@ -23,15 +23,15 @@ from matplotlib import pyplot as plt
 ######################################################################
 
 def archs(classes):
-    return [[Dense(input_dim=2, units=classes, activation="softmax")],
-            [Dense(input_dim=2, units=10, activation='relu'),
+    return [[Dense(units=classes, activation="softmax", input_shape=(2,))],
+            [Dense(units=10, activation='relu', input_shape=(2,)),
              Dense(units=classes, activation="softmax")],
-            [Dense(input_dim=2, units=100, activation='relu'),
+            [Dense(units=100, activation='relu', input_shape=(2,)),
              Dense(units=classes, activation="softmax")],
-            [Dense(input_dim=2, units=10, activation='relu'),
+            [Dense(units=10, activation='relu', input_shape=(2,)),
              Dense(units=10, activation='relu'),
              Dense(units=classes, activation="softmax")],
-            [Dense(input_dim=2, units=100, activation='relu'),
+            [Dense(units=100, activation='relu', input_shape=(2,)),
              Dense(units=100, activation='relu'),
              Dense(units=classes, activation="softmax")]]
 
@@ -59,20 +59,22 @@ def get_data_set(name):
 ######################################################################
 
 class LossHistory(Callback):
-    def on_train_begin(self, logs={}):
-        self.keys = ['loss', 'acc', 'val_loss', 'val_acc']
+    def on_train_begin(self, logs=None):
+        self.keys = ['loss', 'accuracy', 'val_loss', 'val_accuracy']
         self.values = {}
         for k in self.keys:
             self.values['batch_'+k] = []
             self.values['epoch_'+k] = []
 
-    def on_batch_end(self, batch, logs={}):
+    def on_batch_end(self, batch, logs=None):
+        logs = logs or {}
         for k in self.keys:
             bk = 'batch_'+k
             if k in logs:
                 self.values[bk].append(logs[k])
 
-    def on_epoch_end(self, epoch, logs={}):
+    def on_epoch_end(self, epoch, logs=None):
+        logs = logs or {}
         for k in self.keys:
             ek = 'epoch_'+k
             if k in logs:
@@ -103,7 +105,7 @@ def run_keras(X_train, y_train, X_val, y_val, X_test, y_test, layers, epochs, sp
                   callbacks=[history], verbose=verbose)
     # Evaluate the model on validation data, if any
     if X_val is not None or split > 0:
-        val_acc, val_loss = history.values['epoch_val_acc'][-1], history.values['epoch_val_loss'][-1]
+        val_acc, val_loss = history.values['epoch_val_accuracy'][-1], history.values['epoch_val_loss'][-1]
         print ("\nLoss on validation set:"  + str(val_loss) + " Accuracy on validation set: " + str(val_acc))
     else:
         val_acc = None
@@ -116,7 +118,7 @@ def run_keras(X_train, y_train, X_val, y_val, X_test, y_test, layers, epochs, sp
     return model, history, val_acc, test_acc
 
 def dataset_paths(data_name):
-    return ["data/data"+data_name+"_"+suffix+".csv" for suffix in ("train", "validate", "test")]
+    return ["code_for_hw8/data/data"+data_name+"_"+suffix+".csv" for suffix in ("train", "validate", "test")]
 
 # The name is a string such as "1" or "Xor"
 def run_keras_2d(data_name, layers, epochs, display=True, split=0.25, verbose=True, trials=1):
@@ -127,25 +129,16 @@ def run_keras_2d(data_name, layers, epochs, display=True, split=0.25, verbose=Tr
     X_val, y2, _ = get_data_set(val_dataset)
     X_test, y3, _ = get_data_set(test_dataset)
     # Categorize the labels
-    y_train = np_utils.to_categorical(y, num_classes) # one-hot
+    y_train = to_categorical(y, num_classes) # one-hot
     y_val = y_test = None
     if X_val is not None:
-        y_val = np_utils.to_categorical(y2, num_classes) # one-hot        
+        y_val = to_categorical(y2, num_classes) # one-hot        
     if X_test is not None:
-        y_test = np_utils.to_categorical(y3, num_classes) # one-hot
+        y_test = to_categorical(y3, num_classes) # one-hot
     val_acc, test_acc = 0, 0
     for trial in range(trials):
-        # Reset the weights
-        # See https://github.com/keras-team/keras/issues/341
-        session = K.get_session()
-        for layer in layers:
-            for v in layer.__dict__:
-                v_arg = getattr(layer, v)
-                if hasattr(v_arg, 'initializer'):
-                    initializer_func = getattr(v_arg, 'initializer')
-                    initializer_func.run(session=session)
-        # Run the model
-        model, history, vacc, tacc, = \
+        # Reset the weights (modern Keras: re-create model each trial)
+        model, history, vacc, tacc = \
                run_keras(X_train, y_train, X_val, y_val, X_test, y_test, layers, epochs,
                          split=split, verbose=verbose)
         val_acc += vacc if vacc else 0
@@ -167,7 +160,7 @@ def run_keras_2d(data_name, layers, epochs, display=True, split=0.25, verbose=Tr
             plt.title('Epoch val_loss and loss')
             plt.show()
             # Plot epoch accuracy
-            history.plot(['epoch_acc', 'epoch_val_acc'])
+            history.plot(['epoch_accuracy', 'epoch_val_accuracy'])
             plt.xlabel('epoch')
             plt.ylabel('accuracy')
             plt.title('Epoch val_acc and acc')
@@ -211,8 +204,9 @@ def l1_reg(weight_matrix):
 
 
 def filter_reg(weights):
-    lam=0
-    return lam* val
+    lam = 0
+    # 'val' is undefined; this function is a placeholder. Return 0 for now.
+    return 0
 
 def get_image_data_1d(tsize,image_size,prob):
     #prob controls the density of white pixels
@@ -287,21 +281,12 @@ def run_keras_fc_mnist(train, test, layers, epochs, split=0.1, verbose=True, tri
     X_val = X_val.reshape((X_val.shape[0], m*m))
     # Categorize the labels
     num_classes = 10
-    y_train = np_utils.to_categorical(y1, num_classes)
-    y_val = np_utils.to_categorical(y2, num_classes)
+    y_train = to_categorical(y1, num_classes)
+    y_val = to_categorical(y2, num_classes)
     # Train, use split for validation
     val_acc, test_acc = 0, 0
     for trial in range(trials):
-        # Reset the weights
-        # See https://github.com/keras-team/keras/issues/341
-        session = K.get_session()
-        for layer in layers:
-            for v in layer.__dict__:
-                v_arg = getattr(layer, v)
-                if hasattr(v_arg, 'initializer'):
-                    initializer_func = getattr(v_arg, 'initializer')
-                    initializer_func.run(session=session)
-        # Run the model
+        # Reset the weights (modern Keras: re-create model each trial)
         model, history, vacc, tacc = \
                 run_keras(X_train, y_train, X_val, y_val, None, None, layers, epochs, split=split, verbose=verbose)
         val_acc += vacc if vacc else 0
@@ -320,21 +305,12 @@ def run_keras_cnn_mnist(train, test, layers, epochs, split=0.1, verbose=True, tr
     X_val = X_val.reshape((X_val.shape[0], m, m, 1))
     # Categorize the labels
     num_classes = 10
-    y_train = np_utils.to_categorical(y1, num_classes)
-    y_val = np_utils.to_categorical(y2, num_classes)
+    y_train = to_categorical(y1, num_classes)
+    y_val = to_categorical(y2, num_classes)
     # Train, use split for validation
     val_acc, test_acc = 0, 0
     for trial in range(trials):
-        # Reset the weights
-        # See https://github.com/keras-team/keras/issues/341
-        session = K.get_session()
-        for layer in layers:
-            for v in layer.__dict__:
-                v_arg = getattr(layer, v)
-                if hasattr(v_arg, 'initializer'):
-                    initializer_func = getattr(v_arg, 'initializer')
-                    initializer_func.run(session=session)
-        # Run the model
+        # Reset the weights (modern Keras: re-create model each trial)
         model, history, vacc, tacc = \
                 run_keras(X_train, y_train, X_val, y_val, None, None, layers, epochs, split=split, verbose=verbose)
         val_acc += vacc if vacc else 0
