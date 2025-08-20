@@ -1,0 +1,77 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{listings} % useful for putting code in
+
+\title{ML Course Chapter 10}
+\author{Samuel Wang}
+\date{August 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Lab}
+
+\subsection{Question 1}
+
+\subsubsection{1.1}
+
+\paragraph{A: } Increasing $\gamma$ would decrease the penalty applied to longer paths, thus if we wish for the cart to take the longer top path, $\gamma$ should be higher.
+
+\paragraph{B: } If $\tau$ is increased (i.e. the probability of a mistake increases), the bottom path becomes riskier, as the probability of mistakenly steering into the lava in the bottom path is $1-(1-2\tau)^4$, which for small $\tau$ is approximately $8\tau$.
+
+\paragraph{C: } If we wish to take a longer path, $C$ must be decreased, since the higher $C$ is, the more value iteration values taking a shorter path.
+
+\subsubsection{1.2}
+
+\paragraph{A: } It doesn't matter. Since the cart only passes through the environment once, it doesn't effectively learn how to navigate the cave, instead randomly stumbling around until it finds the terminal state.
+
+\paragraph{B: } It doesn't matter. Since the cart only passes through the environment once, it doesn't effectively learn how to navigate the cave, instead randomly stumbling around until it finds the terminal state.
+
+\paragraph{C: } It doesn't matter. Since the cart only passes through the environment once, it doesn't effectively learn how to navigate the cave, instead randomly stumbling around until it finds the terminal state.
+
+\subsubsection{1.3}
+
+\paragraph{A: } Now, the results return to the same as part 1.1. Since the cart passes through a simulated cave multiple times, the cart can ultimately learn to take a path close to the one which is optimal through value iteration.
+
+\paragraph{B: } Now, the results return to the same as part 1.1. Since the cart passes through a simulated cave multiple times, the cart can ultimately learn to take a path close to the one which is optimal through value iteration.
+
+\paragraph{C: } Now, the results return to the same as part 1.1. Since the cart passes through a simulated cave multiple times, the cart can ultimately learn to take a path close to the one which is optimal through value iteration.
+
+\subsection{Question 2}
+
+\paragraph{A: } The main difference between this Q-learning algorithm and the value iteration from last week is that in Q-learning, the learner is not given the transition or reward functions, but instead has to learn an optimal strategy through trial and error.
+
+\paragraph{B: } In the first few graphs, we are choosing to ignore all reward gained, to first let the algorithm learn the basic structure of the states and actions.
+
+\paragraph{C: } For the next few graphs, we can see that the learner is still essentially moving randomly, as all start positions except the rewarded cell essentially gain zero reward.
+
+\paragraph{D: } This happens because the learner has now learned the optimal path from every state to the center.
+
+\paragraph{E: } The reward given for reaching the goal state is most likely to be close to whatever the reward is starting from the goal state after a few iterations, which in this case would be probably around 100.
+
+\paragraph{F: } If a random action was selected among identical actions rather than the first action, I don't really see what the difference would be. In earlier iterations, it would cause the network to wander around more, and try more possibilities, rather than just trying the first one every time. So, it may train faster.
+
+\paragraph{G: } The first few graphs display the algorithm essentially randomly wandering, hence why the graph depicting rewards from each state is so chaotic.
+
+\paragraph{H: } In the first few graphs of SSP, the learner seems to converge on going towards the goal more quickly than in Goal-reward formulation. The most likely explanation for this is that in SSP, the learner is punished for taking too long to reach the goal, whereas in Goal-reward, the reward comes when reaching the goal, no matter how long it takes.
+
+\paragraph{I: } Here, I would prefer SSP, since it converges to a mostly optimal solution quicker, and is much less chaotic after convergence. Looking at the later graphs for Goal-reward, some amount of irregularity can be easily spotted. However, when looking at the SSP graphs, the irregularities are much reduced, and the reward graph is much closer to what we expect from value iteration.
+
+\subsection{Question 3}
+
+\subsubsection{3.1}
+
+\paragraph{A: } With $\epsilon=0$, the optimal policy is likely to not be found, as we will always take what we believe to be the optimal policy at any time. However, this is risky, as it is more than likely the policy we consider optimal at some time is not truly optimal, and was merely lucky.
+
+\paragraph{B: } $\epsilon=1$ forces us to always take a random policy. Although this is essentially guaranteed to find the optimal policy for each point eventually, this takes far too long, as the algorithm has no choice over which policy it should explore.
+
+\paragraph{C: } No value of $\epsilon$ is completely guaranteed to give us optimal behavior during training. Only value iteration is guaranteed to give completely optimal behavior. With some values of $\epsilon$, it is likely that our algorithm gets close to optimal behavior, but never fully optimal.
+
+\subsubsection{3.2}
+
+\paragraph{A: } It seems like the code for this lab has been taken down. Since this part requires running the code to confirm my predictions, I am unable to complete it.
+
+\end{document}

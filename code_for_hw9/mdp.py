@@ -141,8 +141,7 @@ def greedy(q, s):
         if (V >= max_V):
             max_V=V
             max_act=a
-    return a
-    pass
+    return max_act
 
 
 def epsilon_greedy(q, s, eps = 0.5):
