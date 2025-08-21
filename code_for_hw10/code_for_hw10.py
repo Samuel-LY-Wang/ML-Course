@@ -271,4 +271,4 @@ def test_solve_play(d = 6, draw=False,
 # NN Q-learn
 # test_learn_play(iters=50000, tabular=False, batch=False)
 # NN Batch Q-learn (Fitted Q-learn)
-test_learn_play(iters=150, tabular=False, batch=True)
+# test_learn_play(iters=200, tabular=False, batch=True)
