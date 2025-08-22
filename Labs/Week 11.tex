@@ -1,0 +1,55 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{listings} % useful for putting code in
+
+\title{ML Course Chapter 11}
+\author{Samuel Wang}
+\date{August 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Lab}
+
+\subsection{Question 1}
+
+\paragraph{A: } This would be many to one. We are given an input that is split into many chunks, and a single discrete output.
+
+\paragraph{B: } This would be many to many. We are given an input that is split into many chunks, and we want to put a label on each input chunk, so this is many to many.
+
+\paragraph{C: } This would be one to many. We are given a singular input (an image of a cat), and wish to generate a caption that may be of variable length. Granted, the input is a very large vector, but this still works perfectly fine.
+
+\subsection{Question 2}
+
+\paragraph{A: } We define $s_t$ as the sum of $x_1, x_2, \dots x_t$. Thus, we set $W^{ss}=[[1]]$, $W^{sx}=[[1]]$, $W_0^{ss}=[[0]]$, $f_1(x)=x$, $W^o=[[1]]$, $W_0^o=[[0]]$, $f_2(x)=x$
+
+\paragraph{B: } It seems as if I have pretty much got it. The only major difference between the results gotten and the results expected is that I expected $W^{sx}=W_o=1$, whereas when training, multiple different results were gotten, but all had $W^{sx}\cdot W_o=[[1]]$. This somewhat makes sense, as the state is stored as $W^{sx}$ times the sum of the inputs, and $W_o$ transforms this sum back to the true sum.
+
+\subsection{Question 3}
+
+\paragraph{A: } I think the hardest to learn will be "aabaaabbaaaababaabaa" and "abcdefghijklmnopqrstuvwxyz". The first of these strings is fairly irregular, and thus would be difficult to learn on compared to the other strings which simply consist of a pattern repeated multiple times. As for "abcdefghijklmnopqrstuvwxyz", a similar story applies. The pattern is regular, but since we use softmax activation on the output, the RNN treats this as being 26 completely different characters being placed together, which likely is not good for training, as RNNs need large amounts of data to train.
+
+\paragraph{B: } I think only $1$ hidden number is sufficient, as the program only needs to recognize that the letter "a" is highly likely to come after anything.
+
+\paragraph{C: } "aaaaaaaaaa" produces very quick results with only $1$ hidden number, only 1000 steps was needed to train the algorithm to learn that "a" should appear after other as. \newline
+"abcabcabcabcabc" is similar, but slightly more steps were required to learn the overal "abc" structure, about 3,000. \newline
+"aabaaabbaaaababaabaa" requires multiple hidden number. I tried 3, and the model seems to have learned some semblance of pattern involving "a" and "b". \newline
+"abcdefghijklmnopqrstuvwxyz" also requires 3 hidden numbers, even if only 1 is theoretically necessary. It gets fairly good results in just 5000 steps, although it seems to not have fully learned yet, since it still outputs strings with  completely different structure like "jqrstuvwxyz".
+
+\paragraph{D: } It seems as if starting with a capitalized verses a lowercase word yields a very different result. For example, one time, the starting string "Introduction " produced the course "Introduction to the City and International Chemistry", whereas the starting string "introduction " produced "introduction to Computational Engineering" \newline
+Increasing the training steps to 200,000, training took 10 times as long (which was to be expected) for limited gain. Additionally, starting with a lowercase string that does not stand as a string on its own, it's clear that the result is nonsense. In this case, putting "intro" gives "introch Materials and Computational Perceptrachounthrouding Systems Analysis"
+
+\paragraph{E: } Yet again, the algorithm does not know what to do with lowercase letters, as the entire training dataset is capitalized. As a result, when inputting "A", "Apple Crusted Pork Chops" is returned, a somewhat reasonable string. When inputting "a", on the other hanbd, "ananal Fries" is outputted, which makes zero sense.
+
+\paragraph{F: } Lowercase letters with company names tend to fare better, but still fairly poorly. Inputting "Po" gives "Power Capital", and "po" gives "pocide Management", which is comprehensible, but still strange.
+
+\paragraph{G: } With interactive top 5 running on class names, I didn't see much of a difference between interactive top 5 and just plain interactive. My best guess as to when the RNN decides to stop generating though is that there is a special "stop" character that immediately causes the RNN to cease generation.
+
+\paragraph{H: } In general, it seems that testing on company names produced a much higher loss and required longer to train. Class names give a lower loss, and don't take as long to train. The most likely explanation for this is that looking at the data, class names have a more defined and rigid structure compared to company names. Since class names have this structure, they contain less data than company names, and thus it is easier to train on them.
+
+\paragraph{I: } This RNN is a very basic example of generative AI. Generally, such generative AI is many-to-many, as it takes in an input with many parts, and outputs a string with many parts as well.
+
+\end{document}
