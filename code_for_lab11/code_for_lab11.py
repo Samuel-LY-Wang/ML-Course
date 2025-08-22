@@ -661,7 +661,7 @@ class OneHotCodec:
 if __name__ == "__main__":
     #test_linear_accumulator()
     #test_word("abcdefghijklmnopqrstuvwxyz", num_hidden=3, num_steps=5000)
-    test_class_names(interactive = True, interactive_top5 = True)
+    # test_class_names(interactive = True, interactive_top5 = True)
     #test_metal()
     #test_food()
     pass
